@@ -1,0 +1,34 @@
+[
+  {
+    "slug": "price-of-going-back",
+    "repository": "https://github.com/uncomposed/price-of-going-back-idea.git",
+    "commit": "12bd9c6298025759dedf82b799474cdffd9bf5ed",
+    "model_path": "spec/price-of-going-back.yaml",
+    "model_sha256": "9e4ae96ee04b6af0f8e2c9dd704dfc7754304d00a2f15ffabd3a2754a147117b",
+    "raw_url": "https://raw.githubusercontent.com/uncomposed/price-of-going-back-idea/12bd9c6298025759dedf82b799474cdffd9bf5ed/spec/price-of-going-back.yaml"
+  },
+  {
+    "slug": "cislunar-momentum-loop",
+    "repository": "https://github.com/uncomposed/cislunar-momentum-loop.git",
+    "commit": "4e5ca49f51655c1d52152b44bad42b6079d82338",
+    "model_path": "idea.yaml",
+    "model_sha256": "179fee01415183089048fb5ec004e726e7d6b00b016b6981b6c529e42420931c",
+    "raw_url": "https://raw.githubusercontent.com/uncomposed/cislunar-momentum-loop/4e5ca49f51655c1d52152b44bad42b6079d82338/idea.yaml"
+  },
+  {
+    "slug": "voting-topics",
+    "repository": "https://github.com/uncomposed/voting-topics-idea.git",
+    "commit": "ce2a1923a515ee36e2c2e7852b169495bb015f00",
+    "model_path": "MODEL.yaml",
+    "model_sha256": "b380f9d5b713c4a14f2dfcff5efba37839c79a88d2526d5935705528674cf136",
+    "raw_url": "https://raw.githubusercontent.com/uncomposed/voting-topics-idea/ce2a1923a515ee36e2c2e7852b169495bb015f00/MODEL.yaml"
+  },
+  {
+    "slug": "irap",
+    "repository": "https://github.com/uncomposed/irap-protocol.git",
+    "commit": "ed3ad298540e2369486120225f9e91302a35a404",
+    "model_path": "SPEC.yaml",
+    "model_sha256": "f17b57282cff34a98e6d2918b42b5f70b973d41fd54714ce85f99db3163f5691",
+    "raw_url": "https://raw.githubusercontent.com/uncomposed/irap-protocol/ed3ad298540e2369486120225f9e91302a35a404/SPEC.yaml"
+  }
+]

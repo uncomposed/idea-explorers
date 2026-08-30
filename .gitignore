@@ -1,0 +1,6 @@
+node_modules/
+dist/
+src/generated.ts
+public/models/
+.DS_Store
+*.tsbuildinfo
