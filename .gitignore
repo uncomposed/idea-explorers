@@ -4,3 +4,4 @@ src/generated.ts
 public/models/
 .DS_Store
 *.tsbuildinfo
+Caddyfile.live
