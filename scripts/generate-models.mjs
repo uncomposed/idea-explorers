@@ -18,6 +18,29 @@ const text = value => {
 const item = (id, title, statement, options = {}) => ({ id, title, statement: text(statement), ...options })
 const check = (id, title, description, options = {}) => ({ id, title, description: text(description), ...options })
 
+function assertNormalizedModel(model) {
+  const fields = [
+    ['title', model.title], ['summary', model.summary], ['framing', model.framing],
+    ...model.lanes.flatMap(lane => [
+      [`lane ${lane.id} title`, lane.title], [`lane ${lane.id} description`, lane.description],
+      ...lane.items.flatMap(entry => [
+        [`item ${entry.id} title`, entry.title], [`item ${entry.id} statement`, entry.statement],
+        ...(entry.detail == null ? [] : [[`item ${entry.id} detail`, entry.detail]]),
+      ]),
+    ]),
+    ...model.paths.flatMap(path => [
+      [`path ${path.id} title`, path.title],
+      ...(path.description == null ? [] : [[`path ${path.id} description`, path.description]]),
+      ...path.steps.map((step, index) => [`path ${path.id} step ${index + 1}`, step]),
+    ]),
+    ...model.checks.flatMap(entry => [[`check ${entry.id} title`, entry.title], [`check ${entry.id} description`, entry.description]]),
+    ...model.nonGoals.map((goal, index) => [`non-goal ${index + 1}`, goal]),
+  ]
+  for (const [label, value] of fields) {
+    if (typeof value !== 'string') throw new Error(`${model.slug}: ${label} must normalize to text`)
+  }
+}
+
 function normalizePrice(source, lock) {
   const spec = source.specification
   const groups = ['kernel', 'derived', 'hypothesis', 'implementation', 'open_question']
@@ -83,7 +106,7 @@ function normalizeCislunar(source, lock) {
     lanes: layerDefinitions.map(([id, title, description, values]) => ({
       id,
       title,
-      description,
+      description: text(description?.description ?? description),
       items: values.map((node, index) => item(node.id ?? `${String(id).slice(0, 1).toUpperCase()}${index + 1}`, node.title ?? node.question, node.statement ?? node.evidence_needed ?? node.question, {
         detail: node.falsifier ?? node.stopping_rule ?? text(node.examples),
         relations: node.derived_from ?? node.supports,
@@ -189,6 +212,7 @@ for (const lock of locks) {
   const digest = createHash('sha256').update(yaml).digest('hex')
   if (digest !== lock.model_sha256) throw new Error(`${lock.slug} model digest changed: ${digest}`)
   const normalized = normalizers[lock.slug](parse(yaml), lock)
+  assertNormalizedModel(normalized)
   generated.push({
     ...normalized,
     repository: lock.repository,
