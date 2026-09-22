@@ -5,6 +5,7 @@ import { models } from './generated'
 import type { ExplorerItem, ExplorerModel } from './types'
 import './styles.css'
 import { ReaderExplorer } from './ReaderExplorer'
+import { IdeaDirectory } from './IdeaDirectory'
 
 const knownTabs = ['structure', 'pathways', 'boundaries', 'source'] as const
 type Tab = typeof knownTabs[number]
@@ -44,7 +45,7 @@ function App() {
     })).filter(lane => lane.items.length)
   }, [model, query])
 
-  if (!model) return <Index />
+  if (!model) return <IdeaDirectory models={models} />
   if (model.guide) return <ReaderExplorer model={model} models={models} />
 
   return (

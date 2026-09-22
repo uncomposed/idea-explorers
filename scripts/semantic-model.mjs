@@ -15,9 +15,11 @@ export function attachSemantics(model, yaml) {
     return { path: path.join('.'), line: lineCounter.linePos(node.range[0]).line }
   }
   const price = model.slug === 'price-of-going-back'
+  const typed = price || model.slug === 'ai-pacing' || model.slug === 'cislunar-momentum-loop'
   for (const lane of model.lanes) {
-    const key = price ? 'nodes' : ({ kernel: 'kernel', derived: 'derived', hypothesis: 'hypotheses', implementation: 'implementation_choices', open_question: 'open_questions' })[lane.id]
+    const key = source.nodes ? 'nodes' : ({ kernel: 'kernel', derived: 'derived', hypothesis: 'hypotheses', implementation: 'implementation_choices', open_question: 'open_questions' })[lane.id]
     for (const item of lane.items) {
+      if (!typed) { item.source = locate(item.sourcePath); delete item.sourcePath; continue }
       const index = source[key].findIndex(node => node.id === item.id)
       if (index < 0) throw new Error(`Missing source node ${item.id}`)
       const node = source[key][index]
@@ -32,13 +34,34 @@ export function attachSemantics(model, yaml) {
       item.falsifier = node.falsifier
       item.stoppingRule = node.stopping_rule
       item.alternatives = node.replaceable_with ?? node.examples
-      item.links = ['derived_from', 'supports', 'implements'].flatMap(type => (node[type] ?? []).map(target => ({ type, target })))
+      item.links = ['derived_from', 'supports', 'implements', 'relates_to'].flatMap(type => (node[type] ?? []).map(target => ({ type, target })))
+      item.lineage = (node.provenance?.sources ?? []).map(id => {
+        const index = source.sources.findIndex(entry => entry.id === id)
+        if (index < 0) throw new Error(`Missing provenance source ${id}`)
+        const entry = source.sources[index]
+        return { id, title:entry.title, locator:entry.locator, role:entry.contribution, source:locate(['sources',index]) }
+      })
+      delete item.sourcePath
       delete item.detail
       delete item.relations
     }
   }
   model.guide = readerGuides[model.slug]
+  if(model.slug === 'ai-pacing') {
+    const items=model.lanes.flatMap(lane=>lane.items)
+    items.find(item=>item.id==='H1').title='Capability, hardware, and power can remain separable'
+    items.find(item=>item.id==='Q4').title='When might capability alone defeat separate hardware and power controls?'
+    // Preserve the separate relation table literally; its directional semantics
+    // differ from node-level implements, so label it as a recorded relation.
+    for(const edge of source.relations) {
+      const item=items.find(item=>item.id===edge.from)
+      if(!item) throw new Error(`Unknown relation source ${edge.from}`)
+      item.links.push({type:`table_${edge.type}`,target:edge.to})
+    }
+  }
+  for(const path of model.paths ?? []) { if(path.sourcePath) { path.source=locate(path.sourcePath); delete path.sourcePath } }
   for (const check of model.checks ?? []) {
+    if(check.sourcePath) { check.source=locate(check.sourcePath); delete check.sourcePath; continue }
     const index = Number(check.id.split('-').at(-1)) - 1
     const path = price
       ? check.id.startsWith('INV-') ? ['invariants', index] : ['failure_modes', source.failure_modes.findIndex(entry => entry.id === check.id)]
@@ -47,7 +70,10 @@ export function attachSemantics(model, yaml) {
           : check.id.startsWith('FT-') ? ['audit', 'falsification_tests', index] : ['audit', 'promotion_rule']
     check.source = locate(path)
   }
-  model.contextSources = (source.source_anchors ?? []).map((entry, index) => ({ ...entry, source: locate(['source_anchors', index]) }))
+  model.contextSources = source.sources ? source.sources.map((entry,index)=>({id:entry.id,title:entry.title,locator:entry.locator,role:entry.contribution,source:locate(['sources',index])})) : (source.source_anchors ?? []).map((entry, index) => ({ ...entry, source: locate(['source_anchors', index]) }))
+  model.evidenceSummary = typed
+    ? 'This revision states hypotheses and the tests needed to challenge them. It does not report completed empirical validation. Source lineage, where supplied, explains where the thinking came from.'
+    : 'This revision defines behavior, principles, and questions to inspect. Its checks and background references do not establish that an implementation has passed them.'
   // All canonical top-level sections remain reachable in the source browser.
   // This is a coverage inventory, not a claim that every section is in the guide.
   model.sourceSections = Object.entries(source).map(([key, value]) => ({ key, value, source: locate([key]) }))

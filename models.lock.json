@@ -30,5 +30,29 @@
     "model_path": "SPEC.yaml",
     "model_sha256": "f17b57282cff34a98e6d2918b42b5f70b973d41fd54714ce85f99db3163f5691",
     "raw_url": "https://raw.githubusercontent.com/uncomposed/irap-protocol/ed3ad298540e2369486120225f9e91302a35a404/SPEC.yaml"
+  },
+  {
+    "slug": "guestbook",
+    "repository": "https://github.com/uncomposed/relic-protocol.git",
+    "commit": "3def5fdcb92f6c1011465f468bbd26c1e49dfbcc",
+    "model_path": "idea.yaml",
+    "model_sha256": "05cafc846f68e77f9f5fdf9a11e32d6b6165962e5f8b0cfd81c96bfce66eabf0",
+    "raw_url": "https://raw.githubusercontent.com/uncomposed/relic-protocol/3def5fdcb92f6c1011465f468bbd26c1e49dfbcc/idea.yaml"
+  },
+  {
+    "slug": "spoken-margins",
+    "repository": "https://github.com/uncomposed/spoken-margins-idea.git",
+    "commit": "6cc8c664feea02c98649e39eed94a55257543813",
+    "model_path": "public/idea.yaml",
+    "model_sha256": "0f09122e8cba81fd994bf6a682372ce245a22739a7ceb5b99ac7666c5f14b6cd",
+    "raw_url": "https://raw.githubusercontent.com/uncomposed/spoken-margins-idea/6cc8c664feea02c98649e39eed94a55257543813/public/idea.yaml"
+  },
+  {
+    "slug": "ai-pacing",
+    "repository": "https://github.com/uncomposed/ai-pacing.git",
+    "commit": "a28a40c2b964f960f196626f0ed64d59f241b7c2",
+    "model_path": "spec/ai-pacing.yaml",
+    "model_sha256": "f428d25aa21b91eb1e5c97455ef827d3ca502beb04cc08e53b0f5ca23924f753",
+    "raw_url": "https://raw.githubusercontent.com/uncomposed/ai-pacing/a28a40c2b964f960f196626f0ed64d59f241b7c2/spec/ai-pacing.yaml"
   }
 ]

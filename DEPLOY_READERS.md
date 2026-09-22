@@ -1,17 +1,20 @@
-# Reader release scope
+# Shared reader release
 
-This change updates the convenience routes for `price-of-going-back` and
-`cislunar-momentum-loop`. Deploy shared content-addressed assets and the two new
-immutable release directories first, then atomically replace each route's
-`index.html`. Do not delete prior assets, model snapshots, or release directories.
-The shared index and other explorer routes can continue using their current assets.
+Deploy all seven convenience routes and `/ideas/`. Build from a committed checkout
+with `EXPLORER_COMMIT` set to the full viewer commit. Run `npm test`, `npm run build`
+and `npm run verify`. Release manifests bind viewer and model states and list
+SHA-256 digests for every required artifact.
 
-Build from a clean committed checkout with `EXPLORER_COMMIT` set to the full
-viewer commit. Run `npm test`, `npm run build`, and `npm run verify`. Preserve the
-previous route HTML outside the web root for rollback. Verify every file listed
-in the release manifests against its SHA-256 digest before changing live routes.
-The release's `rendering-manifest.json` records both exact model and viewer states.
+Upload shared content-addressed assets, exact model snapshots and immutable
+release directories first. Back up existing convenience HTML and Caddy config,
+then replace HTML atomically. Never delete prior assets, model snapshots, manifests
+or release directories. Snapshot legacy unversioned renderings before replacement.
 
-After publishing, check the two public pages, the new release manifests and assets,
-and representative prior immutable manifests. A website release is not itself an
-IRAP attestation or a new registry registration.
+AI Pacing's `/ideas/ai-pacing/` route now serves this shared reader. Its specialized
+subdomain remains the experience destination. Caddy config must validate before
+reload. Verify public manifest digests, all seven convenience pages, old protected
+files, and the primary experience destinations after deployment.
+
+Registration of a release is separate from deployment. Register a manifest only
+with its exact digest and model state; registration does not constitute an
+attestation or empirical validation.

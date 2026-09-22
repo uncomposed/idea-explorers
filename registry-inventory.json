@@ -1,0 +1,34 @@
+{
+  "registry": "https://ideas.proximitytoprogress.com/api/ideas",
+  "checked_on": "2026-09-22",
+  "ideas": [
+    {
+      "slug": "guestbook",
+      "commit": "3def5fdcb92f6c1011465f468bbd26c1e49dfbcc"
+    },
+    {
+      "slug": "price-of-going-back",
+      "commit": "12bd9c6298025759dedf82b799474cdffd9bf5ed"
+    },
+    {
+      "slug": "spoken-margins",
+      "commit": "6cc8c664feea02c98649e39eed94a55257543813"
+    },
+    {
+      "slug": "cislunar-momentum-loop",
+      "commit": "4e5ca49f51655c1d52152b44bad42b6079d82338"
+    },
+    {
+      "slug": "ai-pacing",
+      "commit": "a28a40c2b964f960f196626f0ed64d59f241b7c2"
+    },
+    {
+      "slug": "voting-topics",
+      "commit": "ce2a1923a515ee36e2c2e7852b169495bb015f00"
+    },
+    {
+      "slug": "irap",
+      "commit": "ed3ad298540e2369486120225f9e91302a35a404"
+    }
+  ]
+}

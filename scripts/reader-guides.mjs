@@ -1,3 +1,4 @@
+import { additionalGuides } from './additional-guides.mjs'
 // Editorial reading aids. Every explanation points back to canonical model entries.
 // These do not add propositions, evidence, or a second authoritative model.
 export const readerGuides = {
@@ -53,3 +54,5 @@ export const readerGuides = {
     featured: ['H1', 'H2', 'H3', 'H4', 'H5'],
   },
 }
+
+Object.assign(readerGuides, additionalGuides)

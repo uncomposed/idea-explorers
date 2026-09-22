@@ -244,3 +244,54 @@
 .reader-content { scroll-margin-top: 78px; }
 .reader-checks .reader-source-link { margin-bottom: 15px; }
 body:has(.reader) { background: #f6f5ef; }
+/* Human factors: names before notation, visible primary action, generous controls. */
+.reader-intro { display: block; padding: 36px 0 30px; }
+.reader-intro > div { max-width: 920px; }
+.reader-experience { margin: 20px 0 25px; }
+.reader-experience .reader-primary { min-height: 48px; font-size: 15px; font-weight: 600; }
+.reader-experience p { margin-top: 8px; font-size: 13px; color: var(--subtle); }
+.reader-limits { padding: 24px 0 35px; }
+.reader-limits h2 { font-size: 26px; margin-bottom: 10px; }
+.reader-limits p { max-width: 850px; font-size: 15px; color: var(--subtle); }
+.reader-refs a { min-height: 44px; align-items: center; font-size: 14px; }
+.reader-inspector-top button { width: 44px; height: 44px; }
+.reader select { min-height: 44px; font-size: 14px; }
+.reader-nav a { min-height: 48px; font-size: 14px; }
+.reader button, .reader-source-link { min-height: 44px; }
+.reader summary { min-height: 44px; font-size: 15px; }
+.reader-step p, .reader-term p, .reader-claim p, .reader-note p { font-size: 14px; }
+.reader-inspector p { font-size: 15px; }
+.reader-card-action, .reader-step-source, .reader-connection { font-size: 12px; }
+.reader-step-source { color: var(--reader-accent); }
+.reader-lineage { margin-top: 20px; }
+.reader-lineage h4 { font-size: 14px; margin: 0 0 8px; }
+.reader-search input { font-size: 16px; }
+.reader-footer a { min-height: 44px; }
+@media (max-width: 680px) {
+  .reader-header { gap: 8px; padding: 8px 18px; }
+  .reader-switch { max-width: 100%; width: 100%; }
+  .reader-switch select { width: 100%; font-size: 14px; min-height: 44px; }
+  .reader-brand { min-height: 32px; }
+  .reader h1 { font-size: 32px; margin: 12px 0; }
+  .reader-intro { padding-top: 22px; }
+  .reader-intro .reader-eyebrow { font-size: 10px; }
+  .reader-draft { display: none; }
+  .reader-experience { margin: 16px 0 20px; }
+  .reader-experience .reader-primary { width: 100%; justify-content: space-between; font-size: 14px; }
+  .reader-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; overflow: visible; position: static; }
+  .reader-nav a { white-space: normal; font-size: 13px; padding: 12px 0; }
+  .reader-inspector { inset: 12px; max-height: calc(100dvh - 24px); }
+}
+.reader-directory { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 20px; padding-bottom: 40px; }
+.reader-directory article { padding: 25px; border: 1px solid var(--rule); border-radius: 8px; background: #fffefa; display: flex; flex-direction: column; align-items: start; }
+.reader-directory h2 { font-size: 29px; line-height: 1.2; margin: 15px 0; }
+.reader-directory h2 a { text-decoration: none; }
+.reader-directory h2 a:hover { text-decoration: underline; }
+.reader-directory p { font-size: 15px; color: var(--subtle); margin-bottom: 25px; }
+.reader-directory .reader-primary { min-height: 44px; margin-top: auto; font-size: 14px; }
+.reader-directory-experience { display: flex; gap: 8px; align-items: center; min-height: 44px; margin-top: 12px; font-size: 14px; color: var(--reader-accent) !important; }
+.reader-directory small { font-size: 12px; color: var(--subtle); }
+@media(max-width:1000px) { .reader-directory { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media(max-width:680px) { .reader-directory { grid-template-columns: 1fr; } }
+
+.reader select, .reader-search, .reader-inspector-top button { border-color: #778479; }

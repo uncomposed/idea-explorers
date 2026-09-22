@@ -83,3 +83,46 @@ test('reader annotations with missing canonical references fail validation', asy
 test('new claim-linked evidence cannot silently inherit the no-evidence display', async () => {
   await assert.rejects(fixture('price-of-going-back', yaml => yaml.replace('    kind: hypothesis', '    evidence: [new-result]\n    kind: hypothesis')), /explicit semantic mapping/)
 })
+
+const { normalizeAdditional } = await import('./additional-models.mjs')
+for (const slug of ['ai-pacing','spoken-margins','voting-topics','irap','guestbook']) {
+  test(`${slug}: adapter preserves all source content, resolves every guide link, and traces every element`, async () => {
+    const lock = locks.find(entry => entry.slug === slug)
+    const yaml = await readFile(new URL(`../public/models/${slug}-${lock.model_sha256.slice(0,12)}.yaml`, import.meta.url), 'utf8')
+    assert.equal(createHash('sha256').update(yaml).digest('hex'), lock.model_sha256)
+    const source=parse(yaml)
+    const model=attachSemantics(normalizeAdditional(source,lock),yaml)
+    assert.deepEqual(Object.fromEntries(model.sourceSections.map(entry=>[entry.key,entry.value])),source)
+    for (const element of model.lanes.flatMap(lane=>lane.items)) {
+      assert.ok(element.title && element.statement && element.source.line > 0)
+      assert.ok(element.source.line <= yaml.split('\n').length)
+    }
+    if(slug==='ai-pacing') {
+      assert.equal(item(model,'H1').lineage.length,3)
+      assert.equal(item(model,'H1').evidence,undefined)
+      assert.equal(item(model,'K2').links.some(link=>link.type==='table_grounds'&&link.target==='D1'),true)
+    }
+    if(slug==='spoken-margins') assert.equal(item(model,'interrupt').links[0].target,'anchor_and_capture')
+  })
+}
+
+test('every registered idea has a pinned model and an experience destination', async () => {
+  const inventory=JSON.parse(await readFile(new URL('../registry-inventory.json',import.meta.url),'utf8'))
+  const experiences=JSON.parse(await readFile(new URL('../experiences.json',import.meta.url),'utf8'))
+  assert.deepEqual(locks.map(entry=>entry.slug).sort(),inventory.ideas.map(entry=>entry.slug).sort())
+  for (const lock of locks) {
+    assert.equal(inventory.ideas.find(entry=>entry.slug===lock.slug).commit,lock.commit)
+    assert.ok(experiences[lock.slug].label.length>5)
+    assert.match(experiences[lock.slug].url,/^https:\/\//)
+    assert.notEqual(experiences[lock.slug].url,`https://proximitytoprogress.com/ideas/${lock.slug}/`,'Experience must not loop back to the same viewer')
+  }
+})
+
+test('public reference controls use meaningful names and shorthand stays in source details', async () => {
+  const ui=await readFile(new URL('../src/ReaderExplorer.tsx',import.meta.url),'utf8')
+  assert.ok(!ui.includes('Keep this boundary in view'))
+  assert.ok(!ui.includes("entry.refs.join(' · ')"))
+  assert.ok(!ui.includes('<span>{item.id}</span>'))
+  assert.ok(!ui.includes('><span>{id}</span>'))
+  assert.ok(ui.indexOf('className="reader-experience"')<ui.indexOf('className="reader-question"'))
+})

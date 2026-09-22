@@ -1,0 +1,37 @@
+{
+  "price-of-going-back": {
+    "label": "Try the interactive graph",
+    "url": "https://proximitytoprogress.com/values-graph/",
+    "description": "Interactive web experience"
+  },
+  "cislunar-momentum-loop": {
+    "label": "Explore the transport trade screen",
+    "url": "https://github.com/uncomposed/lunar-infrastructure",
+    "description": "Downloadable project \u00b7 requires local setup"
+  },
+  "spoken-margins": {
+    "label": "Try Spoken Margins",
+    "url": "https://testflight.apple.com/join/KjcQaPtR",
+    "description": "iOS beta \u00b7 opens Apple TestFlight"
+  },
+  "ai-pacing": {
+    "label": "Explore the policy lens",
+    "url": "https://ai-pacing.proximitytoprogress.com/",
+    "description": "Interactive policy explorer"
+  },
+  "voting-topics": {
+    "label": "Build a voting guide",
+    "url": "https://votingtopics.proximitytoprogress.com/",
+    "description": "Interactive web application"
+  },
+  "irap": {
+    "label": "Explore the idea registry",
+    "url": "https://ideas.proximitytoprogress.com/",
+    "description": "Working registry \u00b7 browse ideas and interpretations"
+  },
+  "guestbook": {
+    "label": "Open the guestbook",
+    "url": "https://relics.proximitytoprogress.com/",
+    "description": "Interactive web application"
+  }
+}

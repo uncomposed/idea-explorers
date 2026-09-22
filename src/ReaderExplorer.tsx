@@ -6,9 +6,9 @@ import './reader.css'
 type View = 'overview' | 'model' | 'evidence' | 'source'
 type Selection = { kind: 'claim' | 'term' | 'step' | 'note'; id: string }
 const views: Array<{ id: View; label: string }> = [{ id: 'overview', label: 'Understand the idea' }, { id: 'model', label: 'Explore relationships' }, { id: 'evidence', label: 'Evidence & questions' }, { id: 'source', label: 'Full model & source' }]
-const kindLabels: Record<string, string> = { kernel: 'Core proposition', derived: 'Derived mechanism', hypothesis: 'Hypothesis', implementation: 'Design choice', open_question: 'Open question' }
-const relationLabels = { derived_from: 'Derived from', supports: 'Proposed support for', implements: 'Implements' }
-const incomingLabels = { derived_from: 'Used to derive', supports: 'Has proposed support from', implements: 'Implemented by' }
+const kindLabels: Record<string, string> = { kernel: 'Core proposition', derived: 'Derived mechanism', hypothesis: 'Hypothesis', implementation: 'Design choice', open_question: 'Open question', definition: 'Definition', mechanism: 'Process step' }
+const relationLabels: Record<string, string> = { derived_from: 'Derived from', supports: 'Proposed support for', implements: 'Implements', relates_to: 'Related question about', next: 'Next step', table_grounds: 'Recorded as a basis for', table_conditions: 'Recorded as a condition for', table_implements: 'Implementation connection recorded to' }
+const incomingLabels: Record<string, string> = { derived_from: 'Used to derive', supports: 'Has proposed support from', implements: 'Implemented by', relates_to: 'Question raised by', next: 'Previous step', table_grounds: 'Has a recorded basis in', table_conditions: 'Has a recorded condition in', table_implements: 'Implementation connection recorded from' }
 const humanize = (value: string) => value.replaceAll('_', ' ').replace(/^\w/, letter => letter.toUpperCase())
 
 function readLocation(): { view: View; selection: Selection | null } {
@@ -101,15 +101,15 @@ export function ReaderExplorer({ model, models }: { model: ExplorerModel; models
       navigate(nextView, to)
     }}>{children}</a>
   }
-  function References({ ids, compact = false }: { ids: string[]; compact?: boolean }) {
-    return <div className={`reader-refs ${compact ? 'compact' : ''}`}>{ids.map(id => <Link key={id} to={{ kind: 'claim', id }}><span>{id}</span>{!compact && byId.get(id)?.title}<ArrowUpRight size={13} aria-hidden="true" /></Link>)}</div>
+  function References({ ids }: { ids: string[] }) {
+    return <div className="reader-refs">{ids.map(id => <Link key={id} to={{ kind: 'claim', id }}>{byId.get(id)?.title ?? 'View source statement'}<ArrowUpRight size={16} aria-hidden="true" /></Link>)}</div>
   }
   function SourceLink({ source }: { source?: SourceLocation }) {
-    return <a className="reader-source-link" href={sourceUrl(model, source)} target="_blank" rel="noreferrer"><FileText size={14} aria-hidden="true" />{source ? `${source.path} · line ${source.line}` : 'Read the exact YAML revision'}<ExternalLink size={12} aria-hidden="true" /></a>
+    return <a className="reader-source-link" href={sourceUrl(model, source)} ><FileText size={14} aria-hidden="true" />{source ? `${source.path} · line ${source.line}` : 'Read the exact YAML revision'}<ExternalLink size={12} aria-hidden="true" /></a>
   }
   function ClaimCard({ item }: { item: ExplorerItem }) {
     return <Link className={`reader-claim ${selection?.kind === 'claim' && selection.id === item.id ? 'selected' : ''}`} to={{ kind: 'claim', id: item.id }}>
-      <span className={`reader-kind kind-${item.kind}`}>{kindLabels[item.kind ?? ''] ?? item.badge}<span>{item.id}</span></span>
+      <span className={`reader-kind kind-${item.kind}`}>{kindLabels[item.kind ?? ''] ?? item.badge}</span>
       <h3>{item.title}</h3>
       {item.statement !== item.title && <p>{item.statement}</p>}
       <span className="reader-card-action">{item.kind === 'hypothesis' ? 'Inspect the claim & proposed tests' : 'See meaning & connections'}<ArrowRight size={16} aria-hidden="true" /></span>
@@ -136,10 +136,11 @@ export function ReaderExplorer({ model, models }: { model: ExplorerModel; models
         <div>
           <div className="reader-eyebrow"><span className="reader-dot" />{guide.premise}<span className="reader-draft">{humanize(model.status.replaceAll('-', ' '))}</span></div>
           <h1>{model.title}</h1>
+          <div className="reader-experience"><a className="reader-primary" href={model.experience.url} aria-label={`Experience this idea: ${model.experience.label}`}>{model.experience.label}<ArrowUpRight size={18} aria-hidden="true" /></a><p>{model.experience.description}</p></div>
           <p className="reader-question">{guide.question}</p>
           <p className="reader-introduction">{guide.introduction}</p>
         </div>
-        <aside className="reader-scope"><span className="reader-eyebrow">Keep this boundary in view</span><p>{guide.scope}</p><References ids={guide.scopeRefs} compact /></aside>
+
       </section>
       <nav className="reader-nav" aria-label="Ways to explore this idea">{views.map(entry => <a key={entry.id} href={destination(entry.id, null)} aria-current={view === entry.id ? 'page' : undefined} onClick={event => {
         if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
@@ -149,11 +150,11 @@ export function ReaderExplorer({ model, models }: { model: ExplorerModel; models
         <div id="reader-content" className="reader-content" tabIndex={-1}>
           {view === 'overview' && <>
             <section className="reader-section reader-mechanism">
-              <div className="reader-section-heading"><div><span className="reader-eyebrow">01 / The mechanism</span><h2>{guide.mechanismTitle}</h2><p>{guide.mechanismDescription}</p></div><span className="reader-guide-label">Reading guide</span></div>
+              <div className="reader-section-heading"><div><span className="reader-eyebrow">01 / The mechanism</span><h2>{guide.mechanismTitle}</h2><p>{guide.mechanismDescription}</p></div></div>
               <ol className="reader-steps">{guide.steps.map((entry, index) => <li key={entry.id}>
                 <Link to={{ kind: 'step', id: entry.id }} className={`reader-step ${step?.id === entry.id ? 'selected' : ''}`}>
                   <span className="reader-step-top"><span className="reader-step-number">0{index + 1}</span><ArrowUpRight size={19} aria-hidden="true" /></span>
-                  <h3>{entry.title}</h3><p>{entry.description}</p><span className="reader-step-source">Based on {entry.refs.join(' · ')}</span>
+                  <h3>{entry.title}</h3><p>{entry.description}</p><span className="reader-step-source">See the reasoning</span>
                 </Link>
                 <div className="reader-connection"><ArrowDown size={14} aria-hidden="true" /><span>{entry.connection}</span></div>
               </li>)}</ol>
@@ -164,31 +165,31 @@ export function ReaderExplorer({ model, models }: { model: ExplorerModel; models
               <div className="reader-terms">{guide.terms.map(entry => <Link to={{ kind: 'term', id: entry.id }} className={`reader-term ${term?.id === entry.id ? 'selected' : ''}`} key={entry.id}><div><h3>{entry.title}</h3><p>{entry.meaning}</p></div><ArrowUpRight size={17} aria-hidden="true" /></Link>)}</div>
             </section>
             <section className="reader-notes">
-              <Link to={{ kind: 'note', id: 'example' }} className="reader-note"><span className="reader-eyebrow">Make it concrete</span><h2>{guide.example.title}</h2><p>{guide.example.text}</p><span className="reader-card-action">See the reasoning<ArrowRight size={16} aria-hidden="true" /></span></Link>
-              <Link to={{ kind: 'note', id: 'uncertainty' }} className="reader-note uncertainty"><span className="reader-eyebrow"><CircleHelp size={16} aria-hidden="true" />The open question</span><h2>{guide.uncertainty.title}</h2><p>{guide.uncertainty.text}</p><span className="reader-card-action">Inspect the hypothesis<ArrowRight size={16} aria-hidden="true" /></span></Link>
+              <Link to={{ kind: 'note', id: 'example' }} className="reader-note"><span className="reader-eyebrow">An example</span><h2>{guide.example.title}</h2><p>{guide.example.text}</p><span className="reader-card-action">See the reasoning<ArrowRight size={16} aria-hidden="true" /></span></Link>
+              <Link to={{ kind: 'note', id: 'uncertainty' }} className="reader-note uncertainty"><span className="reader-eyebrow"><CircleHelp size={16} aria-hidden="true" />The open question</span><h2>{guide.uncertainty.title}</h2><p>{guide.uncertainty.text}</p><span className="reader-card-action">Explore this question<ArrowRight size={16} aria-hidden="true" /></span></Link>
             </section>
-            <div className="reader-next"><div><strong>Ready to look closer?</strong><p>Follow a claim to its dependencies, proposed tests, and exact source.</p></div><Link to={null} nextView="model" className="reader-primary">Explore the relationships<ArrowRight size={16} aria-hidden="true" /></Link></div>
+            <section className="reader-limits"><h2>What this idea does—and does not—say</h2><p>{guide.scope}</p><details><summary>Read the relevant model statements</summary><References ids={guide.scopeRefs} /></details></section><div className="reader-next"><div><strong>Ready to look closer?</strong><p>Follow a claim to its dependencies, proposed tests, and exact source.</p></div><Link to={null} nextView="model" className="reader-primary">Explore the relationships<ArrowRight size={16} aria-hidden="true" /></Link></div>
           </>}
           {view === 'model' && <section className="reader-section">
-            <div className="reader-section-heading"><div><span className="reader-eyebrow">The connected model</span><h2>Start with a claim. Follow its connections.</h2><p>Definitions describe the pieces. These propositions describe what the model says about them. Select one to see both its outgoing and incoming relationships.</p></div></div>
+            <div className="reader-section-heading"><div><span className="reader-eyebrow">The connected model</span><h2>Start with a claim. Follow its connections.</h2><p>Definitions describe the pieces. The statements and process steps below describe what the model says about them. Select one to see both its outgoing and incoming relationships.</p></div></div>
             <div className="reader-controls"><label className="reader-search"><Search size={18} aria-hidden="true" /><input aria-label="Search claims and tests" placeholder="Search a term, claim, or ID…" value={query} onChange={event => setQuery(event.target.value)} /></label><label className="reader-filter"><span className="sr-only">Filter by claim type</span><select value={kind} onChange={event => setKind(event.target.value)}><option value="all">All claim types</option>{Object.entries(kindLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label></div>
-            <p className="reader-result" aria-live="polite">{filtered.length} of {items.length} propositions</p>
+            <p className="reader-result" aria-live="polite">{filtered.length} of {items.length} model elements</p>
             <div className="reader-claims">{filtered.map(item => <ClaimCard key={item.id} item={item} />)}</div>
-            {!filtered.length && <div className="reader-empty"><Search size={28} aria-hidden="true" /><h3>No matching propositions</h3><p>Try a shorter phrase or clear the type filter.</p><button onClick={() => { setQuery(''); setKind('all') }}>Clear search & filter</button></div>}
+            {!filtered.length && <div className="reader-empty"><Search size={28} aria-hidden="true" /><h3>No matching elements</h3><p>Try a shorter phrase or clear the type filter.</p><button onClick={() => { setQuery(''); setKind('all') }}>Clear search & filter</button></div>}
           </section>}
           {view === 'evidence' && <>
             <section className="reader-section">
-              <div className="reader-section-heading"><div><span className="reader-eyebrow">What would make this credible?</span><h2>Hypotheses, evidence, and reasons to revise</h2><p>These are contestable claims. A proposed test is not a test result.</p></div></div>
-              <div className="reader-evidence-notice"><CircleHelp size={21} aria-hidden="true" /><p><strong>No claim-specific empirical results are linked in this model revision.</strong> The model supplies evidence requirements, falsifiers, and stopping rules.{model.contextSources?.length ? ' It also names background sources below; these are not automatically proof of any hypothesis.' : ''}</p></div>
+              <div className="reader-section-heading"><div><span className="reader-eyebrow">What would make this credible?</span><h2>Evidence, questions, and reasons to revise</h2><p>Separate what the model proposes from what has been demonstrated.</p></div></div>
+              <div className="reader-evidence-notice"><CircleHelp size={21} aria-hidden="true" /><p>{model.evidenceSummary}</p></div>
               <div className="reader-claims">{guide.featured.map(id => <ClaimCard key={id} item={byId.get(id)!} />)}</div>
             </section>
-            <section className="reader-section"><div className="reader-section-heading"><div><span className="reader-eyebrow">Proposed verification paths</span><h2>What needs to be checked, in what order</h2><p>These paths describe checks to perform. They do not report completed verification.</p></div></div><div className="reader-paths">{model.paths.map(path => <article key={path.id}><h3>{path.title}</h3><ol>{path.steps.map((entry, index) => <li key={index}>{entry}</li>)}</ol><SourceLink source={model.sourceLocations?.[`evidence_paths.${path.id}`]} /></article>)}</div></section>
-            {!!model.contextSources?.length && <section className="reader-section"><div className="reader-section-heading"><div><span className="reader-eyebrow">Background & provenance</span><h2>Sources named by the model</h2><p>The roles below are declared by the model. These references have not been evaluated here as support for specific claims.</p></div></div><div className="reader-context-sources">{model.contextSources.map(entry => <article key={entry.id}><span className="reader-small-label">{entry.id}</span><h3><a href={entry.uri} target="_blank" rel="noreferrer">{entry.title}<ArrowUpRight size={16} aria-hidden="true" /></a></h3><p>{entry.role}</p><SourceLink source={entry.source} /></article>)}</div></section>}
-            <section className="reader-section"><div className="reader-section-heading"><div><span className="reader-eyebrow">Guardrails</span><h2>Failure modes and limits</h2></div></div><div className="reader-checks">{model.checks.map(entry => <details key={entry.id}><summary>{entry.title}<span>{entry.id}</span></summary><p>{entry.description}</p><SourceLink source={entry.source} />{entry.catches?.length ? <References ids={entry.catches} /> : null}</details>)}</div><h3 className="reader-nongoals-title">What this idea does not claim to do</h3><ul className="reader-nongoals">{model.nonGoals.map((entry, index) => <li key={index}>{entry}</li>)}</ul></section>
+            {model.paths.length > 0 && <section className="reader-section"><div className="reader-section-heading"><div><span className="reader-eyebrow">Proposed verification paths</span><h2>What needs to be checked, in what order</h2><p>These paths describe checks to perform. They do not report completed verification.</p></div></div><div className="reader-paths">{model.paths.map(path => <article key={path.id}><h3>{path.title}</h3><ol>{path.steps.map((entry, index) => <li key={index}>{entry}</li>)}</ol><SourceLink source={path.source ?? model.sourceLocations?.[`evidence_paths.${path.id}`]} /></article>)}</div></section>}
+            {!!model.contextSources?.length && <section className="reader-section"><div className="reader-section-heading"><div><span className="reader-eyebrow">Background & provenance</span><h2>Sources named by the model</h2><p>The roles below are declared by the model. These references have not been evaluated here as support for specific claims.</p></div></div><div className="reader-context-sources">{model.contextSources.map(entry => <article key={entry.id}><h3>{entry.uri ? <a href={entry.uri}>{entry.title}<ArrowUpRight size={16} aria-hidden="true" /></a> : entry.title}</h3>{entry.locator && <p>{entry.locator}</p>}<p>{entry.role}</p><SourceLink source={entry.source} /></article>)}</div></section>}
+            <section className="reader-section"><div className="reader-section-heading"><div><span className="reader-eyebrow">Guardrails</span><h2>Failure modes and limits</h2></div></div><div className="reader-checks">{model.checks.map(entry => <details key={entry.id}><summary>{entry.title}</summary><p>{entry.description}</p><SourceLink source={entry.source} />{entry.catches?.length ? <References ids={entry.catches} /> : null}</details>)}</div>{model.nonGoals.length > 0 && <><h3 className="reader-nongoals-title">What this idea does not claim to do</h3><ul className="reader-nongoals">{model.nonGoals.map((entry, index) => <li key={index}>{entry}</li>)}</ul></>}</section>
           </>}
           {view === 'source' && <section className="reader-section">
             <div className="reader-section-heading"><div><span className="reader-eyebrow">An explanation you can audit</span><h2>The full model is still here</h2><p>The reading guide is an editorial explanation linked to canonical propositions. Every top-level section of the pinned YAML is available below, including material outside the overview.</p></div></div>
-            <div className="reader-provenance"><div><GitBranch size={22} aria-hidden="true" /><strong>Exact model revision</strong><code>{model.commit}</code><p>{model.modelPath}</p><SourceLink /></div><div><Check size={22} aria-hidden="true" /><strong>Source bytes verified at build time</strong><code>SHA-256 {model.modelSha256}</code><p>This verifies source identity. It does not establish the truth of the model.</p><a href={model.modelUrl} target="_blank" rel="noreferrer">Open raw YAML <ExternalLink size={13} aria-hidden="true" /></a></div></div>
+            <div className="reader-provenance"><div><GitBranch size={22} aria-hidden="true" /><strong>Exact model revision</strong><code>{model.commit}</code><p>{model.modelPath}</p><SourceLink /></div><div><Check size={22} aria-hidden="true" /><strong>Source bytes verified at build time</strong><code>SHA-256 {model.modelSha256}</code><p>This verifies source identity. It does not establish the truth of the model.</p><a href={model.modelUrl} >Open raw YAML <ExternalLink size={13} aria-hidden="true" /></a></div></div>
             <p className="reader-coverage">{model.sourceSections?.length} of {model.sourceSections?.length} top-level source sections available. No section is silently discarded.</p>
             <div className="reader-source-sections">{model.sourceSections?.map(section => <details key={section.key}><summary>{humanize(section.key)}<span>{section.key}</span></summary><SourceLink source={section.source} /><SourceValue value={section.value} /></details>)}</div>
           </section>}
@@ -198,10 +199,10 @@ export function ReaderExplorer({ model, models }: { model: ExplorerModel; models
           <h2 tabIndex={-1}>{chosen?.title ?? 'This model element was not found'}</h2>
           {!chosen && <p>The link may refer to a different model revision. Choose a proposition from this model to continue.</p>}
           {claim && <>
-            <span className="reader-claim-id">{claim.id} · Canonical model statement</span>
+            <span className="reader-claim-id">Model statement</span>
             <p className="reader-inspector-statement">{claim.statement}</p>
             {claim.rationale && <InspectorSection title="Reasoning"><p>{claim.rationale}</p></InspectorSection>}
-            {claim.kind === 'hypothesis' && <InspectorSection title="Evidence supplied"><p className="reader-missing">No evidence linked to this claim in this model revision.</p></InspectorSection>}
+            {claim.kind === 'hypothesis' && <InspectorSection title="Evidence supplied"><p className="reader-missing">No empirical validation result is attached to this hypothesis in this revision.</p></InspectorSection>}
             {claim.evidenceNeeded && <InspectorSection title="Evidence needed"><p>{claim.evidenceNeeded}</p></InspectorSection>}
             {claim.falsifier && <InspectorSection title="What would falsify this?"><p>{claim.falsifier}</p></InspectorSection>}
             {claim.stoppingRule && <InspectorSection title="When to stop or revise"><p>{claim.stoppingRule}</p></InspectorSection>}
@@ -212,7 +213,8 @@ export function ReaderExplorer({ model, models }: { model: ExplorerModel; models
               {incoming.map(link => <div className="reader-relationship" key={`${link.type}-${link.item.id}`}><span>{incomingLabels[link.type]}</span><References ids={[link.item.id]} /></div>)}
               {(claim.links?.some(link => link.type === 'supports') || incoming.some(link => link.type === 'supports')) && <p className="reader-small-print">“Proposed support” records the model’s dependency claim. It is not a finding that supporting evidence exists.</p>}
             </InspectorSection>
-            <InspectorSection title="Trace to source"><SourceLink source={claim.source} /><p className="reader-small-print">Model revision {model.commit.slice(0, 12)}</p></InspectorSection>
+            {!!claim.lineage?.length && <InspectorSection title="Where this thinking came from"><p className="reader-small-print">The model names these influences. Attribution is not empirical validation.</p>{claim.lineage.map(entry => <div className="reader-lineage" key={entry.id}><h4>{entry.title}</h4><p>{entry.role}</p>{entry.locator && <p className="reader-small-print">{entry.locator}</p>}<SourceLink source={entry.source} /></div>)}</InspectorSection>}
+            <InspectorSection title="Trace to source"><p className="reader-small-print">Source identifier: {claim.id}. This label locates the statement in the original model.</p><SourceLink source={claim.source} /><p className="reader-small-print">Model revision {model.commit.slice(0, 12)}</p></InspectorSection>
           </>}
           {(term || step || note) && <>
             <p className="reader-inspector-statement">{term?.meaning ?? step?.description ?? note?.text}</p>
@@ -223,7 +225,7 @@ export function ReaderExplorer({ model, models }: { model: ExplorerModel; models
           <button className="reader-panel-close" onClick={close}>Close and return to the idea<ArrowLeft size={15} aria-hidden="true" /></button>
         </dialog>}
       </div>
-      <footer className="reader-footer"><span><span className="reader-dot" />An explanation of model v{model.version}</span><a href={sourceUrl(model)} target="_blank" rel="noreferrer">Source {model.commit.slice(0, 12)}<ExternalLink size={12} aria-hidden="true" /></a><a href={model.registryUrl} target="_blank" rel="noreferrer">Publication record<ExternalLink size={12} aria-hidden="true" /></a></footer>
+      <footer className="reader-footer"><span><span className="reader-dot" />An explanation of model v{model.version}</span><a href={sourceUrl(model)} >Source {model.commit.slice(0, 12)}<ExternalLink size={12} aria-hidden="true" /></a><a href={model.registryUrl} >Publication record<ExternalLink size={12} aria-hidden="true" /></a></footer>
     </main>
   </div>
 }
@@ -236,6 +238,6 @@ function SourceValue({ value }: { value: ModelValue }) {
   if (value === null) return <span className="reader-small-print">Not specified</span>
   if (Array.isArray(value)) return <ol className="reader-source-list">{value.map((entry, index) => <li key={index}><SourceValue value={entry} /></li>)}</ol>
   if (typeof value === 'object') return <dl className="reader-source-values">{Object.entries(value).map(([key, entry]) => <div key={key}><dt>{humanize(key)}</dt><dd><SourceValue value={entry} /></dd></div>)}</dl>
-  if (typeof value === 'string' && /^https?:\/\/\S+$/.test(value)) return <a href={value} target="_blank" rel="noreferrer">{value}</a>
+  if (typeof value === 'string' && /^https?:\/\/\S+$/.test(value)) return <a href={value} >{value}</a>
   return <span>{String(value)}</span>
 }

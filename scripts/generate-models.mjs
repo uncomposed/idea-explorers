@@ -4,10 +4,12 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
 import { attachSemantics } from './semantic-model.mjs'
+import { normalizeAdditional } from './additional-models.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const locks = JSON.parse(await readFile(resolve(root, 'models.lock.json'), 'utf8'))
 const generated = []
+const experiences = JSON.parse(await readFile(resolve(root, 'experiences.json'), 'utf8'))
 
 const words = value => typeof value === 'string' ? value.replaceAll('_', ' ').replace(/\b\w/g, letter => letter.toUpperCase()) : ''
 const text = value => {
@@ -203,8 +205,11 @@ function normalizeIrap(source, lock) {
 const normalizers = {
   'price-of-going-back': normalizePrice,
   'cislunar-momentum-loop': normalizeCislunar,
-  'voting-topics': normalizeVoting,
-  irap: normalizeIrap,
+  'voting-topics': normalizeAdditional,
+  irap: normalizeAdditional,
+  'ai-pacing': normalizeAdditional,
+  'spoken-margins': normalizeAdditional,
+  guestbook: normalizeAdditional,
 }
 
 for (const lock of locks) {
@@ -217,6 +222,7 @@ for (const lock of locks) {
   assertNormalizedModel(normalized)
   generated.push({
     ...normalized,
+    experience: experiences[lock.slug],
     repository: lock.repository,
     commit: lock.commit,
     modelPath: lock.model_path,

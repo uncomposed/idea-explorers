@@ -12,7 +12,10 @@ const display = {
   'price-of-going-back': { title: 'The Price of Going Back', description: 'Explore the model behind a personal rollback experiment without confusing its curve for a universal price of progress.' },
   'cislunar-momentum-loop': { title: 'Cislunar Momentum Loop', description: 'Explore the architecture, feasibility gates, evidence paths, and failure boundaries of a reusable lunar transport loop.' },
   'voting-topics': { title: 'Voting Topics', description: 'Explore the typed information layers and forkable reasoning path behind human-owned civic decision guides.' },
-  irap: { title: 'IRAP', description: 'Explore how exact idea states, independent renderings, signed judgments, and historical recognition fit together.' },
+  'ai-pacing': { title: 'AI Pacing', description: 'Explore how research, adversarial review, and reversible deployment fit together.' },
+  'spoken-margins': { title: 'Spoken Margins', description: 'Explore listening that preserves context, interruption, and your own thoughts.' },
+  guestbook: { title: 'Relic Guestbook', description: 'Explore portable signed acknowledgments of places, discoveries, and encounters.' },
+  irap: { title: 'Idea Rendering Attestation Protocol', description: 'Explore how exact idea states, independent renderings, signed judgments, and historical recognition fit together.' },
 }
 
 async function filesUnder(directory) {
@@ -31,7 +34,7 @@ for (const lock of locks) {
   await mkdir(release, { recursive: true })
   const metadata = display[lock.slug]
   const routeIndex = index.toString('utf8')
-    .replace('<meta name="theme-color" content="#0b0f14" />', ['price-of-going-back', 'cislunar-momentum-loop'].includes(lock.slug) ? '<meta name="theme-color" content="#f6f5ef" />' : '<meta name="theme-color" content="#0b0f14" />')
+    .replace('<meta name="theme-color" content="#0b0f14" />', '<meta name="theme-color" content="#f6f5ef" />')
     .replace('<title>Idea Explorer · Proximity to Progress</title>', `<title>${metadata.title} — Explore the idea</title>`)
     .replace('Explore a canonical idea model published by Proximity to Progress.', metadata.description)
   await writeFile(resolve(route, 'index.html'), routeIndex)

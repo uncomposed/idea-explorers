@@ -26,12 +26,13 @@ export type ExplorerItem = {
   badge?: string
   kind?: string
   source?: SourceLocation
+  lineage?: Array<{ id: string; title: string; locator?: string; role: string; source: SourceLocation }>
   rationale?: string
   evidenceNeeded?: string
   falsifier?: string
   stoppingRule?: string
   alternatives?: string[]
-  links?: Array<{ type: 'derived_from' | 'supports' | 'implements'; target: string }>
+  links?: Array<{ type: string; target: string }>
 }
 
 export type ExplorerLane = {
@@ -46,6 +47,7 @@ export type ExplorerPath = {
   title: string
   description?: string
   steps: string[]
+  source?: SourceLocation
 }
 
 export type ExplorerCheck = {
@@ -79,8 +81,10 @@ export type ExplorerModel = {
   paths: ExplorerPath[]
   checks: ExplorerCheck[]
   nonGoals: string[]
+  experience: { label: string; url: string; description: string }
+  evidenceSummary: string
   guide?: ReaderGuide
-  contextSources?: Array<{ id: string; title: string; uri: string; role: string; source: SourceLocation }>
+  contextSources?: Array<{ id: string; title: string; uri?: string; locator?: string; role: string; source: SourceLocation }>
   sourceSections?: Array<{ key: string; value: ModelValue; source: SourceLocation }>
   sourceLocations?: Record<string, SourceLocation>
 }
