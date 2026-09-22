@@ -1,3 +1,22 @@
+export type SourceLocation = { path: string; line: number }
+export type ModelValue = null | string | number | boolean | ModelValue[] | { [key: string]: ModelValue }
+export type ReadingNote = { title: string; text: string; refs: string[] }
+export type ReaderGuide = {
+  question: string
+  introduction: string
+  premise: string
+  scope: string
+  scopeRefs: string[]
+  mechanismTitle: string
+  mechanismDescription: string
+  steps: Array<{ id: string; title: string; description: string; refs: string[]; connection: string }>
+  terms: Array<{ id: string; title: string; meaning: string; refs: string[] }>
+  example: ReadingNote
+  uncertainty: ReadingNote
+  returnFlow?: ReadingNote
+  featured: string[]
+}
+
 export type ExplorerItem = {
   id: string
   title: string
@@ -5,6 +24,14 @@ export type ExplorerItem = {
   detail?: string
   relations?: string[]
   badge?: string
+  kind?: string
+  source?: SourceLocation
+  rationale?: string
+  evidenceNeeded?: string
+  falsifier?: string
+  stoppingRule?: string
+  alternatives?: string[]
+  links?: Array<{ type: 'derived_from' | 'supports' | 'implements'; target: string }>
 }
 
 export type ExplorerLane = {
@@ -27,6 +54,7 @@ export type ExplorerCheck = {
   description: string
   catches?: string[]
   tone?: 'guard' | 'question' | 'boundary'
+  source?: SourceLocation
 }
 
 export type ExplorerModel = {
@@ -51,4 +79,8 @@ export type ExplorerModel = {
   paths: ExplorerPath[]
   checks: ExplorerCheck[]
   nonGoals: string[]
+  guide?: ReaderGuide
+  contextSources?: Array<{ id: string; title: string; uri: string; role: string; source: SourceLocation }>
+  sourceSections?: Array<{ key: string; value: ModelValue; source: SourceLocation }>
+  sourceLocations?: Record<string, SourceLocation>
 }

@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
+import { attachSemantics } from './semantic-model.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const locks = JSON.parse(await readFile(resolve(root, 'models.lock.json'), 'utf8'))
@@ -115,6 +116,7 @@ function normalizeCislunar(source, lock) {
     })),
     paths: Object.entries(source.evidence_paths).map(([id, steps]) => ({ id, title: words(id), steps })),
     checks: [
+      ...source.failure_modes.map((value, index) => check(`F-${index + 1}`, `Failure mode ${index + 1}`, value, { tone: 'guard' })),
       ...source.audit.omission_checks.map((value, index) => check(`OM-${index + 1}`, `Omission check ${index + 1}`, value, { tone: 'guard' })),
       ...source.audit.falsification_tests.map((value, index) => check(`FT-${index + 1}`, `Falsification test ${index + 1}`, value, { tone: 'question' })),
       check('PROMOTE', 'Promotion rule', source.audit.promotion_rule, { tone: 'boundary' }),
@@ -211,7 +213,7 @@ for (const lock of locks) {
   const yaml = await response.text()
   const digest = createHash('sha256').update(yaml).digest('hex')
   if (digest !== lock.model_sha256) throw new Error(`${lock.slug} model digest changed: ${digest}`)
-  const normalized = normalizers[lock.slug](parse(yaml), lock)
+  const normalized = attachSemantics(normalizers[lock.slug](parse(yaml), lock), yaml)
   assertNormalizedModel(normalized)
   generated.push({
     ...normalized,

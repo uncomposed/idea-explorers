@@ -1,0 +1,55 @@
+// Editorial reading aids. Every explanation points back to canonical model entries.
+// These do not add propositions, evidence, or a second authoritative model.
+export const readerGuides = {
+  'price-of-going-back': {
+    question: 'What would it take to give up parts of modern life?',
+    introduction: 'Consider a specific loss. Say what compensation you would need. Then explore how your answers add up as you move further into the past.',
+    premise: 'A personal reflection on progress',
+    scope: 'The curve describes one participant’s judgments. It is not an objective price of progress or a measure of society’s welfare.',
+    scopeRefs: ['K5', 'K7'],
+    mechanismTitle: 'From one loss to a personal picture',
+    mechanismDescription: 'Follow the proposed exercise. Select a step to see the rules and assumptions behind it.',
+    steps: [
+      { id: 'loss', title: 'Define a loss', description: 'Choose a capability or protection. Make clear what disappears, what remains, and whose life is affected.', refs: ['K2', 'K3', 'K5'], connection: 'A bounded question' },
+      { id: 'response', title: 'Make a judgment', description: 'Name compensation, express no loss or a preference for the change, refuse at any price, or leave the answer unknown.', refs: ['K1', 'K4', 'K6'], connection: 'Distinct responses' },
+      { id: 'curve', title: 'Reveal the curve', description: 'Combine responses using a declared rule. An unacceptable loss creates a hard stop, not a very large price.', refs: ['K7', 'D1', 'D2'], connection: 'A provisional picture' },
+      { id: 'audit', title: 'Reconsider it', description: 'Look for missing milestones and overlapping losses. Revise answers when the combined picture changes your judgment.', refs: ['D3', 'H3', 'H4'], connection: 'Revisions can return to earlier steps' },
+    ],
+    terms: [
+      { id: 'participant', title: 'Participant scope', meaning: 'Whose welfare an answer describes: the participant alone, or the participant and named dependents.', refs: ['K5'] },
+      { id: 'milestone', title: 'Milestone', meaning: 'A concrete change in lived capability or protection—not just the name of an invention.', refs: ['K2', 'H3'] },
+      { id: 'boundary', title: 'Loss boundary', meaning: 'The distinction between what disappears and what remains in the imagined world.', refs: ['K3', 'K4'] },
+      { id: 'hard-stop', title: 'Hard stop', meaning: 'A loss the participant refuses at any finite payment. The reachable curve ends there unless that judgment changes.', refs: ['K6', 'D2'] },
+      { id: 'rollback', title: 'Rollback curve', meaning: 'A picture of declared compensation at successive points in the past, qualified by overlaps, missing losses, and hard stops.', refs: ['K7'] },
+    ],
+    example: { title: 'Imagine losing a modern capability', text: 'The useful question is what changes in your life, not what the device costs. Payment can buy only substitutes available in that earlier world.', refs: ['K2', 'K3', 'K4'] },
+    uncertainty: { title: 'Can people make stable judgments about an imagined loss?', text: 'The model calls for repeated questions, reordered prompts, interviews, and comprehension checks. It does not supply their results.', refs: ['H1'] },
+    featured: ['H1', 'H2', 'H3', 'H4', 'H5'],
+  },
+  'cislunar-momentum-loop': {
+    question: 'Could reusing a lunar transport loop reduce what we launch from Earth?',
+    introduction: 'Launch material from the Moon, exchange momentum in orbit, carry cargo toward Earth, and reuse the transport hardware where the complete cycle makes sense.',
+    premise: 'A conditional transport architecture',
+    scope: 'Any saving must include building, powering, maintaining, replacing, and recovering the whole system. The model does not establish flight readiness or an advantage over simpler transport.',
+    scopeRefs: ['K1', 'K6', 'K7', 'H5'],
+    mechanismTitle: 'Follow the cargo. Account for the return.',
+    mechanismDescription: 'A conceptual sequence, not an orbit or trajectory simulation. Select a component to inspect its conditions.',
+    steps: [
+      { id: 'surface', title: 'Launch from the Moon', description: 'A surface mass driver sends material toward an orbital collection interface. Power, targeting, and safe missed-shot handling limit the flow.', refs: ['K2', 'H1', 'H4'], connection: 'Mass · outbound lunar material' },
+      { id: 'exchange', title: 'Exchange momentum', description: 'A lunar tether exchanges outbound lunar mass for inbound equipment or returning hardware—if capture and reset work.', refs: ['D1', 'K4', 'H2'], connection: 'Mass + momentum · capture and transfer' },
+      { id: 'shuttle', title: 'Carry the cargo', description: 'Reusable shuttles can gather packets and separate bulk transport from the surface launch system.', refs: ['D2', 'K3'], connection: 'Mass + reusable hardware · Earthward cargo' },
+      { id: 'arrival', title: 'Slow down near Earth', description: 'Aerocapture could remove arrival energy with less imported propellant, if heating, recovery, and refurbishment close.', refs: ['D3', 'H3'], connection: 'Energy · atmospheric braking, conditional' },
+    ],
+    returnFlow: { title: 'Reusable hardware returns Moonward', text: 'An Earth tether is an optional way to send an empty shuttle back. Its momentum must be restored by a lunar recharge stream, and it must beat a propulsive return after risk and replacement are counted.', refs: ['D4', 'K4', 'H2', 'H5'] },
+    terms: [
+      { id: 'mass-driver', title: 'Mass driver', meaning: 'The surface launch system whose energy and throughput budget includes every kilogram launched, including flight hardware and propellant.', refs: ['K2', 'H1', 'H4'] },
+      { id: 'tether', title: 'Momentum-exchange tether', meaning: 'A system that trades momentum with a payload through changes in its orbit and spin. Each exchange needs counterflow, reboost, or an accounted state change.', refs: ['K4', 'D1'] },
+      { id: 'shuttle', title: 'Cargo shuttle', meaning: 'Reusable orbital transport that can aggregate packets and carry bulk cargo separately from the surface launch system.', refs: ['D2'] },
+      { id: 'aerocapture', title: 'Aerocapture', meaning: 'Using atmospheric braking to remove arrival energy. Its proposed benefit depends on heating, guidance, recovery, and repeated reuse.', refs: ['D3', 'H3'] },
+      { id: 'lifecycle', title: 'Lifecycle Earth-origin mass', meaning: 'The complete mass burden from Earth over buildout and operation, including infrastructure, consumables, replacements, and recovery—not just one vehicle’s fuel.', refs: ['K1', 'H5'] },
+    ],
+    example: { title: 'Less propellant does not automatically mean a better system', text: 'A tether that saves fuel can still lose the comparison if its structure, recharge, replacements, and recovery add more Earth-origin mass than it avoids.', refs: ['K1', 'K4', 'D4', 'H5'] },
+    uncertainty: { title: 'Can the complete loop beat simpler architectures?', text: 'The comparison must include capacity, failure, replacement, and uncertainty on the same boundary. Individual component savings do not answer that question.', refs: ['H5', 'K1'] },
+    featured: ['H1', 'H2', 'H3', 'H4', 'H5'],
+  },
+}

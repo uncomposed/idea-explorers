@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle2, CircleDot, Code2, ExternalLink, GitBranch, Gi
 import { models } from './generated'
 import type { ExplorerItem, ExplorerModel } from './types'
 import './styles.css'
+import { ReaderExplorer } from './ReaderExplorer'
 
 const knownTabs = ['structure', 'pathways', 'boundaries', 'source'] as const
 type Tab = typeof knownTabs[number]
@@ -44,6 +45,7 @@ function App() {
   }, [model, query])
 
   if (!model) return <Index />
+  if (model.guide) return <ReaderExplorer model={model} models={models} />
 
   return (
     <div className={`app motif-${model.motif}`}>

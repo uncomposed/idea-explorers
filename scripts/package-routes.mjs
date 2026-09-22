@@ -31,6 +31,7 @@ for (const lock of locks) {
   await mkdir(release, { recursive: true })
   const metadata = display[lock.slug]
   const routeIndex = index.toString('utf8')
+    .replace('<meta name="theme-color" content="#0b0f14" />', ['price-of-going-back', 'cislunar-momentum-loop'].includes(lock.slug) ? '<meta name="theme-color" content="#f6f5ef" />' : '<meta name="theme-color" content="#0b0f14" />')
     .replace('<title>Idea Explorer · Proximity to Progress</title>', `<title>${metadata.title} — Explore the idea</title>`)
     .replace('Explore a canonical idea model published by Proximity to Progress.', metadata.description)
   await writeFile(resolve(route, 'index.html'), routeIndex)
